@@ -27,7 +27,7 @@
 
 void generate_sss_all_tables(struct sss_tables *tables, int N_id_2);
 void convert_tables(struct fc_tables *fc_tables, struct sss_tables *in);
-
+void generate_N_id_1_table(int table[30][30]);
 
 int sss_synch_init(sss_synch_t *q) {
 	bzero(q, sizeof(sss_synch_t));
@@ -35,6 +35,7 @@ int sss_synch_init(sss_synch_t *q) {
 	if (dft_plan(SSS_DFT_LEN, COMPLEX_2_COMPLEX, FORWARD, &q->dftp_input)) {
 		return -1;
 	}
+	generate_N_id_1_table(q->N_id_1_table);
 	q->dftp_input.options = DFT_MIRROR_POS | DFT_DC_OFFSET;
 	return 0;
 }
@@ -81,7 +82,7 @@ int sss_synch_frame(sss_synch_t *q, cf_t *input, int *subframe_idx,
 			*subframe_idx = sss_synch_subframe(m0, m1);
 		}
 		if (N_id_1) {
-			*N_id_1 = sss_synch_N_id_1(m0, m1);
+			*N_id_1 = sss_synch_N_id_1(q, m0, m1);
 		}
 		return 1;
 	} else {
@@ -117,9 +118,15 @@ int sss_synch_subframe(int m0, int m1) {
 }
 
 /** Returns the N_id_1 value based on the m0 and m1 values */
-int sss_synch_N_id_1(int m0, int m1) {
-	fprintf(stderr, "Not implemented\n");
-	return -1;
+int sss_synch_N_id_1(sss_synch_t *q, int m0, int m1) {
+	if (m0<0 || m0>29 || m1<0 || m1>29) {
+		return -1;
+	}
+	if (m1 > m0) {
+		return q->N_id_1_table[m0][m1-1];
+	} else {
+		return q->N_id_1_table[m1][m0-1];
+	}
 }
 
 /** High-level API */

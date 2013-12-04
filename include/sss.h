@@ -59,6 +59,7 @@ typedef struct {
 	int symbol_sz;
 	int subframe_sz;
 
+	int N_id_1_table[30][30];
 	struct fc_tables fc_tables;
 
 }sss_synch_t;
@@ -74,7 +75,7 @@ int sss_synch_set_N_id_2(sss_synch_t *q, int N_id_2);
 void sss_synch_m0m1(sss_synch_t *q, cf_t *input, int *m0, float *m0_value,
 		int *m1, float *m1_value);
 int sss_synch_subframe(int m0, int m1);
-int sss_synch_N_id_1(int m0, int m1);
+int sss_synch_N_id_1(sss_synch_t *q, int m0, int m1);
 
 int sss_synch_frame(sss_synch_t *q, cf_t *input, int *subframe_idx, int *N_id_1);
 void sss_synch_set_threshold(sss_synch_t *q, float threshold);
